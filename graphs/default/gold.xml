@@ -1,0 +1,43 @@
+<?xml version="1.0" standalone="no"?>
+
+<graph>
+
+<description>
+GOLD Accounting Manager
+http://www.emsl.pnl.gov/docs/mscf/gold
+</description>
+
+<copyright>
+Copyright (c) 2000 - 2012 The Regents of the University of California.
+All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
+</copyright>
+
+<changelog>
+</changelog>
+
+<edge from="server">
+  <to>gold-client</to>
+  <to>gold-server</to>
+</edge>
+<order head="server">
+  <tail>gold-client</tail>
+</order>
+<order head="server">
+  <tail>gold-server</tail>
+</order>
+
+<edge from="server">
+  <to>gold-doc</to>
+</edge>
+<order head="server">
+  <tail>gold-doc</tail>
+</order>
+
+<edge from="base">
+  <to>gold-roll-test</to>
+</edge>
+<order head="base">
+  <tail>gold-roll-test</tail>
+</order>
+
+</graph>

@@ -1,0 +1,3 @@
+NAME    = gold
+VERSION = 2.2.0.1
+RELEASE = 1

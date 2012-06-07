@@ -1,0 +1,242 @@
+<?xml version="1.0" standalone="no"?>
+
+<kickstart>
+
+<description>
+GOLD Accounting Manager -- GOLD server hosts
+http://www.emsl.pnl.gov/docs/mscf/gold
+</description>
+
+<copyright>
+Copyright (c) 2000 - 2011 The Regents of the University of California.
+All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
+</copyright>
+
+<changelog>
+</changelog>
+
+<package>postgresql-libs</package>
+<package>postgresql-devel</package>
+<package>postgresql</package>
+<package>postgresql-server</package>
+
+<post>
+
+if test -f /usr/sbin/useradd.real; then
+  USERADD=/usr/sbin/useradd.real
+else
+  USERADD=/usr/sbin/useradd
+fi
+
+<!-- JJH: see gold-2.1.7.1/README INSTALLATION -->
+
+<!--
+  JJH: unpacking done by Rocks
+  1)  Prepare to build and install Gold by unpacking the archive and creating
+      an appropriate user to manage Gold.
+-->
+$USERADD -M -u420 -c "Accounting,SDSC,,,{system}," -d /opt/gold gold
+
+<!--
+  JJH: Done by os roll
+  2)  Install the prerequisites. These include Perl 5.6 (with suidperl), libxml2
+      and PostgreSQL 7. Apache Httpd server, OpenSSL and mod_ssl are needed
+      if you want to use the web GUI. Gnu readline is optional.
+
+  JJH: Done by src/gold/Makefile.
+  3)  Perform pre-install configurations by running the "configure" script.
+
+  4)  Compile the program with "make". Also use "make gui" if you intend to
+      install the web GUI.
+
+  JJH: src/gold/Makefile stores bundled perl libraries in /opt/gold/perldeps.
+  4)  Install the prerequisite Perl modules with "make deps".
+-->
+<!-- Steps 4,5,6a moved to gold-client.xml --> 
+<!--
+  JJH: "make install" done by src/gold/Makefile
+  5)  Install Gold with "make install". Generate a secret key with
+      "make auth_key". Install the gui with "make install-gui" if necessary.
+-->
+<!--
+  6)  Perform general setup by editing Gold config files and setting
+      environment variables.
+-->
+<file name="/opt/gold/etc/goldd.conf" perms="0644">
+# Gold Server Config File
+
+super.user = gold
+
+server.host = localhost
+# server.port = 7112
+
+database.datasource = DBI:Pg:dbname=gold;host=localhost
+# database.user = NONE
+# database.password = NONE
+
+response.chunksize = 100000
+# currency.precision = 0
+
+# security.authentication = true
+# security.encryption = false
+
+# account.autogen = true
+# user.autogen = false
+# user.default = NONE
+# project.autogen = false
+# project.default = NONE
+# machine.autogen = false
+# machine.default = NONE
+
+# Log4perl configuration
+log4perl.logger = TRACE, Log, Screen
+log4perl.appender.Log.Threshold = TRACE
+log4perl.appender.Screen.Threshold = FATAL
+#log4perl.logger.Message = TRACE, Screen
+#log4perl.appender.Log = Log::Log4perl::Appender::File
+log4perl.appender.Log = Log::Dispatch::FileRotate
+log4perl.appender.Log.filename = /var/log/gold/goldd.log
+log4perl.appender.Log.mode = append
+log4perl.appender.Log.size = 10000000
+log4perl.appender.Log.max = 7
+log4perl.appender.Log.layout = PatternLayout
+log4perl.appender.Log.layout.ConversionPattern = %d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %M  %m%n
+log4perl.appender.Screen = Log::Log4perl::Appender::Screen
+log4perl.appender.Screen.layout = PatternLayout
+log4perl.appender.Screen.layout.ConversionPattern = %d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %M [%F:%L]  %m%n
+</file>
+
+<file name="/etc/profile.d/gold-path.csh" perms="0644"> 
+setenv GOLDHOMEDIR /opt/gold
+set path = ( $path /opt/gold/bin /opt/gold/sbin )
+</file>
+
+<file name="/etc/profile.d/gold-path.sh" perms="0644">  
+export GOLDHOMEDIR=/opt/gold
+export PATH=$PATH:/opt/gold/bin:/opt/gold/sbin:
+</file>
+
+<file name="/etc/init.d/gold" perms="0755">
+#!/bin/bash
+#
+# chkconfig: 2345 88 12
+# description: gold startup script
+#
+# 1. This file should be installed as /etc/init.d/gold
+# 
+# 2. Start gold with:
+#
+#      /etc/init.d/gold start
+#
+# Source function library.
+[ -f /etc/rc.d/init.d/functions ] || exit 0
+. /etc/rc.d/init.d/functions
+
+RETVAL=0
+export GOLD_HOME=/opt/gold
+
+#
+# The pathname substitution in daemon command assumes prefix and
+# exec_prefix are same.  This is the default, unless the user requests
+# otherwise.
+#
+case "$1" in
+    start)
+        echo -n "Starting gold: "
+        daemon --user gold /opt/gold/sbin/goldd
+        RETVAL=$?
+        echo
+        [ $RETVAL -eq 0 ] &amp;&amp; touch /var/lock/subsys/gold
+        ;;
+    stop)
+        echo -n "Shutting down gold: "
+        /opt/gold/sbin/goldd -k >/dev/null
+        RETVAL=$?
+        [ $RETVAL -eq 0 ] &amp;&amp; rm -f /var/lock/subsys/gold &amp;&amp; success
+        echo
+        ;;
+    restart)
+        $0 stop
+        $0 start
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+        ;;
+esac
+
+</file>
+
+
+<!-- store the database data on a stateful partition, The following
+Entity Declaration defines this path. For rocks 5.2 this can be an
+attribute  -->
+<file name="/etc/sysconfig/pgsql/postgresql">
+PGDATA=/export/pgsql/data
+</file>
+
+<!-- configure postgres and gold on the first boot -->
+
+<file name="/etc/rc.d/rocksconfig.d/post-49-postgres" perms="0755">
+#!/bin/bash
+
+mkdir -p /var/lib/pgsql/.ssh
+touch /var/lib/pgsql/.ssh/id_rsa.pub
+
+if [ ! -d /export/pgsql ]
+then
+	mkdir -p /export/pgsql
+	chown postgres.postgres /export/pgsql
+	su postgres -c "/usr/bin/initdb -D /export/pgsql/data"
+	cat &gt;&gt; /export/pgsql/data/pg_hba.conf &lt;&lt; 'EOFPGDATA'
+#Gold Connections
+host    gold         all        &Kickstart_PrivateNetwork;/&Kickstart_PrivateNetmaskCIDR;           trust
+EOFPGDATA
+fi
+
+touch /var/log/pgsql
+chown postgres.postgres /var/log/pgsql
+
+/sbin/chkconfig postgresql on
+service postgresql start
+
+su postgres -c "/usr/bin/createuser --superuser gold"
+su postgres -c "/usr/bin/createdb gold"
+su postgres -c "/usr/bin/psql gold &lt; /opt/gold/dbsetup/bank.sql"
+
+rm /etc/rc.d/rocksconfig.d/post-49-postgres
+</file>
+
+<file name="/etc/rc.d/rocksconfig.d/post-50-gold" perms="0755">
+#!/bin/bash
+
+/bin/mkdir -p /opt/gold/.ssh
+/usr/bin/ssh-keygen -q -f /opt/gold/.ssh/id_rsa -N ''
+/bin/chown -R gold:gold /opt/gold
+
+/bin/mkdir -p /var/log/gold
+/bin/touch /var/log/gold/gold.log
+/bin/chmod +s /var/log/gold
+/bin/chown -R gold:gold /var/log/gold
+
+/sbin/chkconfig gold on
+/sbin/service gold start
+
+# give gold up to 10 secs to get up to speed
+for S in `seq 1 10`; do
+  /opt/gold/bin/glsuser &gt;/dev/null 2>&gt;1
+  if test $? -eq 0; then
+    break
+  fi
+done
+
+# allow moab to talk to the database
+su - gold -c '/opt/gold/bin/gmkuser -d "Moab Scheduler" moab'
+su - gold -c '/opt/gold/bin/goldsh RoleUser Create Role=Scheduler Name=moab'
+
+rm /etc/rc.d/rocksconfig.d/post-50-gold
+</file>
+
+</post>
+
+</kickstart> 

@@ -1,0 +1,84 @@
+## First-time initialization of postgres database for gold
+mkdir -p /export/pgsql/data
+mkdir -p /export/pgsql/backups
+chown -R postgres.postgres /export/pgsql
+su - postgres
+export PGLIB=/usr/lib/pgsql
+export PGDATA=/export/pgsql/data
+initdb --pgdata=/export/pgsql/data
+
+cat > /etc/sysconfig/pgsql/postgresql << 'EOF'
+export PGDATA=/export/pgsql/data
+EOF
+
+-- As Root:
+service postgresql start
+
+-- As postgres user
+creatdb gold
+psql gold < bank.sql
+psql -d postgres
+create role "gold" with password ";
+alter role gold with login;
+grant ALL on database gold to gold with grant option;
+\c gold
+grant all on g_account to gold; 
+grant all on g_account_account to gold;
+grant all on g_account_account_log to gold;
+grant all on g_account_log        to gold;
+grant all on g_account_machine   to gold;
+grant all on g_account_machine_log to gold;
+grant all on g_account_organization to gold;
+grant all on g_account_organization_log  to gold;
+grant all on g_account_project          to gold;
+grant all on g_account_project_log     to gold;
+grant all on g_account_user           to gold;
+grant all on g_account_user_log      to gold;
+grant all on g_action               to gold;
+grant all on g_action_log          to gold;
+grant all on g_allocation         to gold;
+grant all on g_allocation_log    to gold;
+grant all on g_attribute        to gold;
+grant all on g_attribute_log   to gold;
+grant all on g_charge_rate    to gold;
+grant all on g_charge_rate_log      to gold;
+grant all on g_job  to gold;
+grant all on g_job_log to gold;
+grant all on g_key_generator       to gold;
+grant all on g_machine            to gold;
+grant all on g_machine_log       to gold;
+grant all on g_object           to gold;
+grant all on g_object_log      to gold;
+grant all on g_organization   to gold;
+grant all on g_organization_log  to gold;
+grant all on g_password         to gold;
+grant all on g_password_log    to gold;
+grant all on g_project        to gold;
+grant all on g_project_log   to gold;
+grant all on g_project_machine to gold;
+grant all on g_project_machine_log  to gold;
+grant all on g_project_user        to gold;
+grant all on g_project_user_log   to gold;
+grant all on g_quotation         to gold;
+grant all on g_quotation_charge_rate    to gold;
+grant all on g_quotation_charge_rate_log to gold;
+grant all on g_quotation_log   to gold;
+grant all on g_reservation    to gold;
+grant all on g_reservation_allocation   to gold;
+grant all on g_reservation_allocation_log  to gold;
+grant all on g_reservation_log to gold;
+grant all on g_role to gold;
+grant all on g_role_action     to gold;
+grant all on g_role_action_log to gold;
+grant all on g_role_log       to gold;
+grant all on g_role_user     to gold;
+grant all on g_role_user_log to gold;
+grant all on g_system       to gold;
+grant all on g_system_log  to gold;
+grant all on g_transaction to gold;
+grant all on g_transaction_log    to gold;
+grant all on g_undo              to gold;
+grant all on g_user             to gold;
+grant all on g_user_log        to gold;
+\q
+
