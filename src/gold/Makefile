@@ -66,8 +66,6 @@ install::
 	    echo $$M >> $(ROOT)/$(PKGROOT)/perldeps/buildorder; \
 	  done; \
 	  make build_root=$(ROOT) install; \
-	  make build_root=$(ROOT) gui; \
-	  make build_root=$(ROOT) install-gui; \
 	  for S in $(SQL_FILES); do \
 	    install -m644 $$S $(ROOT)/$(PKGROOT)/dbsetup; \
 	  done; \
