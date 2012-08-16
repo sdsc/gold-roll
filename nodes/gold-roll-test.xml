@@ -72,7 +72,7 @@ SKIP: {
     ok($output =~ /^\s*gold/m, 'gold DB created');
   }
   SKIP: {
-    skip 'gold init running', 2 if -f '/etc/rc.d/rocksconfig.d/post-50-gold';
+    skip 'gold init running', 1 if -f '/etc/rc.d/rocksconfig.d/post-50-gold';
     $output = `ps wwaux | grep goldd`;
     ok($output =~ /goldd/, 'goldd service running');
   }
