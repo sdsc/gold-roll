@@ -76,7 +76,6 @@ SKIP: {
     $output = `ps wwaux | grep goldd`;
     ok($output =~ /goldd/, 'goldd service running');
     $output = `goldsh RoleUser Query`;
-    ok($output =~ /Scheduler\s*moab/, 'moab RoleUser created');
   }
 }
 

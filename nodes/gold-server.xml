@@ -230,10 +230,6 @@ for S in `seq 1 10`; do
   fi
 done
 
-# allow moab to talk to the database
-su - gold -c '/opt/gold/bin/gmkuser -d "Moab Scheduler" moab'
-su - gold -c '/opt/gold/bin/goldsh RoleUser Create Role=Scheduler Name=moab'
-
 rm /etc/rc.d/rocksconfig.d/post-50-gold
 </file>
 
