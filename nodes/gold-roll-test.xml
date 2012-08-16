@@ -75,7 +75,6 @@ SKIP: {
     skip 'gold init running', 2 if -f '/etc/rc.d/rocksconfig.d/post-50-gold';
     $output = `ps wwaux | grep goldd`;
     ok($output =~ /goldd/, 'goldd service running');
-    $output = `goldsh RoleUser Query`;
   }
 }
 
