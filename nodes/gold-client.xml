@@ -21,6 +21,18 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 
 <post>
 
+/bin/grep -q '^gold:' /etc/passwd
+if test $? -ne 0; then
+  useradd -M -u420 -c "Accounting,SDSC,,,{system}," -d /opt/gold gold
+fi
+
+/bin/mkdir -p /var/log/gold
+/bin/touch /var/log/gold/gold.log
+/bin/chmod a+w /var/log/gold/gold.log
+/bin/chown -R gold:gold /var/log/gold
+
+perl -pi -e 's/GOLD_SERVER/&Kickstart_PublicHostname;/g' /opt/gold/etc/*
+
 # Install the perl prerequisite packages that are bundled w/gold
 /bin/mkdir -p /opt/gold/lib/perl5
 if test ! -d /opt/gold/bin; then
@@ -37,56 +49,6 @@ for M in `cat /opt/gold/perldeps/buildorder`; do
   /bin/rm -fr $M
 done
 
-<file name="/opt/gold/etc/auth_key" perms="0444">
-testtest
-</file>
-
-<file name="/opt/gold/etc/gold.conf" perms="0644">
-# Gold Client Config File
-
-server.host = &Kickstart_PublicHostname;
-# server.port = 7112
-# server.backup = NONE
-
-# security.authentication = true
-# security.encryption = false
-# security.token.type = symmetric
-# wire.protocol = SSSRMAP
-
-# response.chunking = false
-# response.chunksize = 0
-# currency.precision = 0
-
-# account.show = Id,Name,Amount,Projects,Users,Machines,Description
-# allocation.show = Id,Account,Active,StartTime,EndTime,Amount,CreditLimit,Deposited,Description
-# balance.show = Id,Name,Amount,Reserved,Balance,CreditLimit,Available
-# job.show = Id,JobId,User,Project,Machine,Queue,QualityOfService,Stage,Charge,Processors,Nodes,WallDuration,StartTime,EndTime,Description
-# machine.show = Name,Active,Architecture,OperatingSystem,Organization,Description
-# project.show = Name,Active,Users,Machines,Description
-# quotations.show = Id,Amount,Job,Project,User,Machine,StartTime,EndTime,WallDuration,Uses,ChargeRates,Description
-# reservation.show = Id,Name,Amount,StartTime,EndTime,Job,User,Project,Machine,Accounts,Description
-# transaction.show = Id,Object,Action,Actor,Name,Child,JobId,Amount,Delta,Account,Project,User,Machine,Allocation,Count,Description
-# user.show = Name,Active,CommonName,PhoneNumber,EmailAddress,DefaultProject,Description
-
-# Log4perl configuration
-log4perl.logger = TRACE, Log, Screen
-log4perl.appender.Log.Threshold = INFO
-log4perl.appender.Screen.Threshold = FATAL
-#log4perl.logger.Message = TRACE, Screen
-#log4perl.appender.Log = Log::Log4perl::Appender::File
-log4perl.appender.Log = Log::Dispatch::FileRotate
-log4perl.appender.Log.filename = /var/log/gold/gold.log
-#log4perl.appender.Log.filename = sub { my $user=(getpwuid($&lt;))[0]; "/var/log/gold/gold.log.$user"  }
-log4perl.appender.Log.mode = append
-log4perl.appender.Log.size = 10000000
-log4perl.appender.Log.max = 7
-log4perl.appender.Log.layout = PatternLayout
-log4perl.appender.Log.layout.ConversionPattern = %d{yyyy-MM-dd HH:mm:ss} %-5p %M  %m%n
-log4perl.appender.Screen = Log::Log4perl::Appender::Screen
-log4perl.appender.Screen.layout = PatternLayout
-log4perl.appender.Screen.layout.ConversionPattern = %d{yyyy-MM-dd HH:mm:ss.SSS} %-5p %M [%F:%L]  %m%n
-</file>
-
 <file name="/etc/profile.d/gold-path.csh" perms="0644"> 
 setenv GOLDHOMEDIR "/opt/gold"
 set path = ( $path /opt/gold/bin /opt/gold/sbin )
@@ -96,20 +58,6 @@ set path = ( $path /opt/gold/bin /opt/gold/sbin )
 export GOLDHOMEDIR=/opt/gold
 export PATH=$PATH:/opt/gold/bin:/opt/gold/sbin:
 </file>
-
-/bin/mkdir -p /var/log/gold
-/bin/touch /var/log/gold/gold.log
-/bin/chmod a+w /var/log/gold/gold.log
-/bin/grep -q '^gold:' /etc/passwd
-if test $? -ne 0; then
-  if test -f /usr/sbin/useradd.real; then
-    USERADD=/usr/sbin/useradd.real
-  else
-    USERADD=/usr/sbin/useradd
-  fi
-  $USERADD -M -u420 -c "Accounting,SDSC,,,{system}," -d /opt/gold gold
-fi
-/bin/chown -R gold:gold /var/log/gold
 
 </post>
 

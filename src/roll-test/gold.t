@@ -1,25 +1,4 @@
-<?xml version="1.0" standalone="no"?>
-
-<kickstart>
-
-<description>
-GOLD Accounting Manager roll installation test.
-</description>
-
-<copyright>
-Copyright (c) 2000 - 2012 The Regents of the University of California.
-All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
-</copyright>
-
-<changelog>
-</changelog>
-
-<post>
-
-/bin/mkdir -m 0755 /root/rolltests
-
-<file name="/root/rolltests/gold.t" perms="0755">
-<![CDATA[#!/usr/bin/perl -w
+#!/usr/bin/perl -w
 # gold roll installation test.  Usage:
 # gold.t [nodetype]
 #   where nodetype is one of "Compute", "Dbnode", "Frontend" or "Login"
@@ -40,31 +19,27 @@ if($appliance =~ /$installedOnAppliancesPattern/) {
   ok(! $goldIsInstalled, 'gold not installed');
 }
 SKIP: {
-  skip 'gold not installed', 9 if ! $goldIsInstalled;
+  skip 'gold not installed', 10 if ! $goldIsInstalled;
   ok(-x '/usr/bin/suidperl', 'perl-suidperl installed');
   ok(-d '/usr/include/libxml2/libxml/', 'libxml2-devel installed');
   ok(-f '/opt/gold/lib/perl5/CGI.pm', 'gold perl dependencies installed');
   ok(-f '/opt/gold/etc/auth_key', 'gold auth_key created');
   ok(-f '/opt/gold/etc/gold.conf', 'gold.conf created');
+  ok(-f '/opt/gold/etc/goldd.conf', 'goldd.conf created');
+  `grep -s '^gold:' /etc/passwd 2>&1`;
+  ok($? == 0, 'gold user created');
   $output = `which glsproject`;
   chomp($output);
   ok($output eq "$ENV{GOLDHOMEDIR}/bin/glsproject", 'gold in default path');
   ok(-d '/var/log/gold', '/var/log/gold created');
   $output = `ls -ld /var/log/gold/gold.log 2>&1`;
   like($output, qr/.rw.rw.rw./, '/var/log/gold/gold.log world writable');
-  `grep -s '^gold:' /etc/passwd`;
-  ok($? == 0, 'gold user created');
 }
 
 # gold-server.xml
 SKIP: {
-  skip 'not server', 7 if $appliance ne 'Frontend';
+  skip 'not server', 4 if $appliance ne 'Frontend';
   ok(-x '/usr/bin/psql', 'postgres installed');
-  `grep -s '^gold:' /etc/passwd 2>&1`;
-  ok($? == 0, 'gold user created');
-  ok(-f '/opt/gold/etc/goldd.conf', 'goldd.conf created');
-  $output = `which gbalance 2>&1`;
-  like($output, qr#$ENV{GOLDHOMEDIR}/bin/gbalance#, 'gold in default path');
   ok(-f '/etc/init.d/gold', 'goldd service installed');
   SKIP: {
     skip 'pg init running', 1 if -f '/etc/rc.d/rocksconfig.d/post-49-postgres';
@@ -77,10 +52,3 @@ SKIP: {
     ok($output =~ /goldd/, 'goldd service running');
   }
 }
-
-]]>
-</file>
-
-</post>
-
-</kickstart> 

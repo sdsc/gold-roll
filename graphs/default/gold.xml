@@ -25,12 +25,8 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <order head="server">
   <tail>gold-server</tail>
 </order>
-
-<edge from="base">
-  <to>gold-roll-test</to>
-</edge>
-<order head="base">
-  <tail>gold-roll-test</tail>
+<order head="gold-client">
+  <tail>gold-server</tail>
 </order>
 
 </graph>

@@ -59,6 +59,7 @@ install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/perldeps
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/dbsetup
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/etc
 	( \
 	  cd $(SOURCE); \
 	  for M in $(BUNDLED_PERL_MODULES); do \
@@ -70,6 +71,7 @@ install::
 	    install -m644 $$S $(ROOT)/$(PKGROOT)/dbsetup; \
 	  done; \
 	)
+	cp patch-files/*.conf patch-files/auth_key $(ROOT)/$(PKGROOT)/etc/
 
 clean::
 	rm -rf $(SOURCE)
