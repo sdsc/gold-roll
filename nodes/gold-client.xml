@@ -18,6 +18,7 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <package>gold</package>
 <package>perl-suidperl</package>
 <package>libxml2-devel</package>
+<package>gold-roll-test</package>
 
 <post>
 
@@ -40,13 +41,25 @@ if test ! -d /opt/gold/bin; then
 fi
 export PERL5LIB=/opt/gold/lib/perl5:$PERL5LIB
 for M in `cat /opt/gold/perldeps/buildorder`; do
-  /bin/tar zxvf /opt/gold/perldeps/$M.tar.gz
-  cd $M
-  /bin/mkdir junk
-  /bin/echo | /usr/bin/perl Makefile.PL LIB=/opt/gold/lib/perl5 INSTALLBIN=/opt/gold/bin INSTALLSCRIPT=/opt/gold/bin INSTALLMAN1DIR=`pwd`/junk INSTALLMAN3DIR=`pwd`/junk
-  (/usr/bin/make &amp;&amp; /usr/bin/make install)
-  cd ..
-  /bin/rm -fr $M
+  case $M in
+    *gold*)
+      buildpackage=1
+    ;;
+    *)
+      perlrpm=perl-`echo $M | sed 's/-[0-9].*//'`
+      yum install $perlrpm &gt; /opt/gold/perldeps/$M.yumout 2&gt;&amp;1
+      buildpackage=$?
+    ;;
+  esac
+  if test $buildpackage -ne 0; then
+    /bin/tar zxvf /opt/gold/perldeps/$M.tar.gz
+    cd $M
+    /bin/mkdir junk
+    /bin/echo | /usr/bin/perl Makefile.PL LIB=/opt/gold/lib/perl5 INSTALLBIN=/opt/gold/bin INSTALLSCRIPT=/opt/gold/bin INSTALLMAN1DIR=`pwd`/junk INSTALLMAN3DIR=`pwd`/junk
+    (/usr/bin/make &amp;&amp; /usr/bin/make install) &gt; /opt/gold/perldeps/$M.buildout 2&gt;&amp;1
+    cd ..
+    /bin/rm -fr $M
+  fi
 done
 
 <file name="/etc/profile.d/gold-path.csh" perms="0644"> 
