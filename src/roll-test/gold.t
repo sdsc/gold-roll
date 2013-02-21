@@ -52,3 +52,4 @@ SKIP: {
     ok($output =~ /goldd/, 'goldd service running');
   }
 }
+
