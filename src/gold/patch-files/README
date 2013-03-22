@@ -1,0 +1,9 @@
+auth_key
+  password file for the gold daemon
+
+gold.conf
+  basic default gold client config file--note that a roll <post> section
+  replaces GOLD_SERVER with the DNS name of the cluster management node
+
+goldd.conf
+  basic default gold server config file

@@ -74,9 +74,7 @@ esac
 </file>
 
 
-<!-- store the database data on a stateful partition, The following
-Entity Declaration defines this path. For rocks 5.2 this can be an
-attribute  -->
+<!-- store the database data on a stateful partition -->
 <file name="/etc/sysconfig/pgsql/postgresql">
 PGDATA=/export/pgsql/data
 </file>

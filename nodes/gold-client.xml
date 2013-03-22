@@ -22,9 +22,13 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 
 <post>
 
+/bin/grep -q '^gold:' /etc/group
+if test $? -ne 0; then
+  groupadd gold
+fi
 /bin/grep -q '^gold:' /etc/passwd
 if test $? -ne 0; then
-  useradd -M -u420 -c "Accounting,SDSC,,,{system}," -d /opt/gold gold
+  useradd -M -u420 -g gold -c "Accounting,SDSC,,,{system}," -d /opt/gold gold
 fi
 
 /bin/mkdir -p /var/log/gold
