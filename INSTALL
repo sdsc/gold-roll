@@ -1,0 +1,10 @@
+This roll bundles the gold accounting manager.  To install, execute these
+instructions on a Rocks development machine (e.g., a frontend), starting in
+this directory:
+
+% make
+% rocks add roll *.iso
+% rocks enable roll gold
+% cd /export/rocks/install
+% rocks create distro
+% rocks run roll gold | bash
