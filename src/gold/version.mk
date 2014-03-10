@@ -2,6 +2,7 @@ NAME               = gold
 VERSION            = 2.2.0.5
 RELEASE            = 1
 PKGROOT            = /opt/gold
+RPM.EXTRAS         = AutoReq:No
 
 SRC_SUBDIR         = gold
 
