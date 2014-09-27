@@ -93,7 +93,6 @@ BUNDLED_PERL_MODULES = \
   CGI-Session-3.95
 
 -include $(ROCKSROOT)/etc/Rules.mk
-include Rules.mk
 include pull.mk
 
 build:: $(SRC_DIRS)
@@ -104,8 +103,8 @@ build:: $(SRC_DIRS)
 	( \
 	  cd $(SOURCE_DIR); \
 	  ./configure --prefix=$(PKGROOT) --with-db=$(DB) \
-	              -with-user=gold --with-cgi-bin=/var/www/html/gold; \
-	  $(MAKE); \
+	              --with-user=gold --with-cgi-bin=/var/www/html/gold; \
+	  $(MAKE) \
 	)
 	@echo "::: Package $(NAME) build complete :::"
 	
@@ -123,7 +122,7 @@ install::
 	  $(MAKE) build_root=$(ROOT) install; \
 	  for S in $(SQL_FILES); do \
 	    install -m644 $$S $(ROOT)/$(PKGROOT)/dbsetup; \
-	  done; \
+	  done \
 	)
 	cp patch-files/*.conf patch-files/auth_key $(ROOT)/$(PKGROOT)/etc/
 	@echo "::: Package $(NAME) install complete :::"

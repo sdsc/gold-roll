@@ -8,16 +8,14 @@ http://www.clusterresources.com/products/gold-allocation-manager.php
 </description>
 
 <copyright>
-Copyright (c) 2000 - 2012 The Regents of the University of California.
+Copyright (c) 2000 - 2014 The Regents of the University of California.
 All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 </copyright>
 
-<changelog>
-</changelog>
-
-<package>gold</package>
 <package>perl-suidperl</package>
 <package>libxml2-devel</package>
+<package>gold</package>
+<package>gold-client-config</package>
 <package>gold-roll-test</package>
 
 <post>
@@ -38,7 +36,8 @@ fi
 
 perl -pi -e 's/GOLD_SERVER/&Kickstart_PublicHostname;/g' /opt/gold/etc/*
 
-# Install the perl prerequisite packages that are bundled w/gold
+# Install the perl prerequisite packages that are bundled w/gold.  Use the
+# versions bundled w/the o/s where possible.
 /bin/mkdir -p /opt/gold/lib/perl5
 if test ! -d /opt/gold/bin; then
   /bin/mkdir -p /opt/gold/bin
@@ -65,16 +64,6 @@ for M in `cat /opt/gold/perldeps/buildorder`; do
     /bin/rm -fr $M
   fi
 done
-
-<file name="/etc/profile.d/gold-path.csh" perms="0644"> 
-setenv GOLDHOMEDIR "/opt/gold"
-set path = ( $path /opt/gold/bin /opt/gold/sbin )
-</file>
-
-<file name="/etc/profile.d/gold-path.sh" perms="0644">  
-export GOLDHOMEDIR=/opt/gold
-export PATH=$PATH:/opt/gold/bin:/opt/gold/sbin:
-</file>
 
 </post>
 

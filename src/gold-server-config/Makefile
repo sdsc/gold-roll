@@ -1,13 +1,13 @@
-# --------------------------------------------------- -*- Makefile -*- --
 # $Id$
 #
 # @Copyright@
 # 
 # 				Rocks(r)
 # 		         www.rocksclusters.org
-# 		       version 5.2 (Chimichanga)
+# 		         version 5.6 (Emerald Boa)
+# 		         version 6.1 (Emerald Boa)
 # 
-# Copyright (c) 2000 - 2011 The Regents of the University of California.
+# Copyright (c) 2000 - 2013 The Regents of the University of California.
 # All rights reserved.	
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -53,20 +53,25 @@
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # 
 # @Copyright@
+#
+# $Log$
 
-PKGROOT = /root/rolltests
 REDHAT.ROOT = $(CURDIR)/../../
 
 -include $(ROCKSROOT)/etc/Rules.mk
 include Rules.mk
 
+PGDATA_DIR = /export/pgsql/data
+
 build:
 
 install::
-	  mkdir -p $(ROOT)/$(PKGROOT)
-	  cp *.t $(ROOT)/$(PKGROOT)/
-	  perl -pi -e 's/ROLLCOMPILER/$(ROLLCOMPILER)/g' $(ROOT)/$(PKGROOT)/*.t
-	  perl -pi -e 's/ROLLMPI/$(ROLLMPI)/g' $(ROOT)/$(PKGROOT)/*.t
-	  perl -pi -e 's/ROLLNETWORK/$(ROLLNETWORK)/g' $(ROOT)/$(PKGROOT)/*.t
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/init.d
+	cp goldd $(ROOT)/$(PKGROOT)/init.d/
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/rc.d/rocksconfig.d
+	cp post* $(ROOT)/$(PKGROOT)/rc.d/rocksconfig.d
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/sysconfig/pgsql
+	echo "PGDATA=$(PGDATA_DIR)" > \
+	  $(ROOT)/$(PKGROOT)/sysconfig/pgsql/postgresql
 
 clean::

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+mkdir -p /var/lib/pgsql/.ssh
+touch /var/lib/pgsql/.ssh/id_rsa.pub
+
+if [ ! -d /export/pgsql ]
+then
+	mkdir -p /export/pgsql
+	chown postgres.postgres /export/pgsql
+	su postgres -c "/usr/bin/initdb -D /export/pgsql/data"
+	cat >> /export/pgsql/data/pg_hba.conf << 'EOFPGDATA'
+#Gold Connections - subnet filled in later by gold-server.xml post section
+host    gold         all        GOLD_SUBNET           trust
+EOFPGDATA
+fi
+
+touch /var/log/pgsql
+chown postgres.postgres /var/log/pgsql
+
+/sbin/chkconfig postgresql on
+service postgresql start
+
+su postgres -c "/usr/bin/createuser --superuser gold"
+su postgres -c "/usr/bin/createdb gold"
+su postgres -c "/usr/bin/psql gold < /opt/gold/dbsetup/bank.sql"
+
+rm /etc/rc.d/rocksconfig.d/post-49-postgres

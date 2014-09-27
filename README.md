@@ -27,7 +27,7 @@ Rocks development machine.
 
 ## Dependencies
 
-Unknown at this time.
+None.
 
 
 ## Building
@@ -59,26 +59,12 @@ To install, execute these instructions on a Rocks frontend:
 % rocks run roll gold | bash
 ```
 
-In addition to the software itself, the roll installs gold environment
-module files in:
-
-```shell
-/opt/modulefiles/applications/gold
-```
-
-
 ## Testing
 
 The gold-roll includes a test script which can be run to verify proper
-installation of the gold-roll documentation, binaries and module files. To
+installation of the roll documentation, binaries and module files. To
 run the test scripts execute the following command(s):
 
 ```shell
 % /root/rolltests/gold.t 
-ok 1 - gold is installed
-ok 2 - gold test run
-ok 3 - gold module installed
-ok 4 - gold version module installed
-ok 5 - gold version module link created
-1..5
 ```

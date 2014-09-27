@@ -8,135 +8,18 @@ http://www.clusterresources.com/products/gold-allocation-manager.php
 </description>
 
 <copyright>
-Copyright (c) 2000 - 2011 The Regents of the University of California.
+Copyright (c) 2000 - 2014 The Regents of the University of California.
 All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 </copyright>
-
-<changelog>
-</changelog>
 
 <package>postgresql-libs</package>
 <package>postgresql-devel</package>
 <package>postgresql</package>
 <package>postgresql-server</package>
+<package>gold-server-config</package>
 
 <post>
-
-<file name="/etc/init.d/gold" perms="0755">
-#!/bin/bash
-#
-# chkconfig: 2345 88 12
-# description: gold startup script
-#
-# 1. This file should be installed as /etc/init.d/gold
-# 
-# 2. Start gold with:
-#
-#      /etc/init.d/gold start
-#
-# Source function library.
-[ -f /etc/rc.d/init.d/functions ] || exit 0
-. /etc/rc.d/init.d/functions
-
-RETVAL=0
-export GOLD_HOME=/opt/gold
-
-#
-# The pathname substitution in daemon command assumes prefix and
-# exec_prefix are same.  This is the default, unless the user requests
-# otherwise.
-#
-case "$1" in
-    start)
-        echo -n "Starting gold: "
-        daemon --user gold /opt/gold/sbin/goldd
-        RETVAL=$?
-        echo
-        [ $RETVAL -eq 0 ] &amp;&amp; touch /var/lock/subsys/gold
-        ;;
-    stop)
-        echo -n "Shutting down gold: "
-        /opt/gold/sbin/goldd -k >/dev/null
-        RETVAL=$?
-        [ $RETVAL -eq 0 ] &amp;&amp; rm -f /var/lock/subsys/gold &amp;&amp; success
-        echo
-        ;;
-    restart)
-        $0 stop
-        $0 start
-        ;;
-    *)
-        echo "Usage: $0 {start|stop|restart}"
-        exit 1
-        ;;
-esac
-
-</file>
-
-
-<!-- store the database data on a stateful partition -->
-<file name="/etc/sysconfig/pgsql/postgresql">
-PGDATA=/export/pgsql/data
-</file>
-
-<!-- configure postgres and gold on the first boot -->
-
-<file name="/etc/rc.d/rocksconfig.d/post-49-postgres" perms="0755">
-#!/bin/bash
-
-mkdir -p /var/lib/pgsql/.ssh
-touch /var/lib/pgsql/.ssh/id_rsa.pub
-
-if [ ! -d /export/pgsql ]
-then
-	mkdir -p /export/pgsql
-	chown postgres.postgres /export/pgsql
-	su postgres -c "/usr/bin/initdb -D /export/pgsql/data"
-	cat &gt;&gt; /export/pgsql/data/pg_hba.conf &lt;&lt; 'EOFPGDATA'
-#Gold Connections
-host    gold         all        &Kickstart_PrivateNetwork;/&Kickstart_PrivateNetmaskCIDR;           trust
-EOFPGDATA
-fi
-
-touch /var/log/pgsql
-chown postgres.postgres /var/log/pgsql
-
-/sbin/chkconfig postgresql on
-service postgresql start
-
-su postgres -c "/usr/bin/createuser --superuser gold"
-su postgres -c "/usr/bin/createdb gold"
-su postgres -c "/usr/bin/psql gold &lt; /opt/gold/dbsetup/bank.sql"
-
-rm /etc/rc.d/rocksconfig.d/post-49-postgres
-</file>
-
-<file name="/etc/rc.d/rocksconfig.d/post-50-gold" perms="0755">
-#!/bin/bash
-
-/bin/mkdir -p /opt/gold/.ssh
-/usr/bin/ssh-keygen -q -f /opt/gold/.ssh/id_rsa -N ''
-/bin/chown -R gold:gold /opt/gold
-
-/bin/mkdir -p /var/log/gold
-/bin/touch /var/log/gold/gold.log
-/bin/chmod +s /var/log/gold
-/bin/chown -R gold:gold /var/log/gold
-
-/sbin/chkconfig gold on
-/sbin/service gold start
-
-# give gold up to 10 secs to get up to speed
-for S in `seq 1 10`; do
-  /opt/gold/bin/glsuser &gt;/dev/null 2>&gt;1
-  if test $? -eq 0; then
-    break
-  fi
-done
-
-rm /etc/rc.d/rocksconfig.d/post-50-gold
-</file>
-
+perl -pi -e 's#GOLD_SUBNET#&Kickstart_PrivateNetwork;/&Kickstart_PrivateNetmaskCIDR;#g' /etc/rc.d/rocksconfig.d/*
 </post>
 
 </kickstart> 

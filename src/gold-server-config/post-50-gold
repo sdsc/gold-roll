@@ -1,0 +1,23 @@
+#!/bin/bash
+
+/bin/mkdir -p /opt/gold/.ssh
+/usr/bin/ssh-keygen -q -f /opt/gold/.ssh/id_rsa -N ''
+/bin/chown -R gold:gold /opt/gold
+
+/bin/mkdir -p /var/log/gold
+/bin/touch /var/log/gold/gold.log
+/bin/chmod +s /var/log/gold
+/bin/chown -R gold:gold /var/log/gold
+
+/sbin/chkconfig gold on
+/sbin/service gold start
+
+# give gold up to 10 secs to get up to speed
+for S in `seq 1 10`; do
+  /opt/gold/bin/glsuser > /dev/null 2>&1
+  if test $? -eq 0; then
+    break
+  fi
+done
+
+rm /etc/rc.d/rocksconfig.d/post-50-gold
