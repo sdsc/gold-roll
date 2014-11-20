@@ -1,6 +1,6 @@
 NAME       = gold-client-config
 VERSION    = 1
 RELEASE    = 0
-PKGROOT    = /etc
+PKGROOT    = /etc/profile.d
 
 RPM.EXTRAS = AutoReq:No

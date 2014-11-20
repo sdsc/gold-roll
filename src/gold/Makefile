@@ -93,7 +93,23 @@ BUNDLED_PERL_MODULES = \
   CGI-Session-3.95
 
 -include $(ROCKSROOT)/etc/Rules.mk
-include pull.mk
+include $(SDSCDEVEL)/Pull.mk
+include $(SDSCDEVEL)/Rules.mk
+
+LICENSE_FILES = $(SOURCE_DIR)/{LICENSE,README}
+
+$(NAME).spec: DESCRIPTION LICENSE
+
+DESCRIPTION:
+	( \
+	  $(DESCRIBE_PKG) \
+	) > $@
+
+LICENSE: $(SRC_DIRS)
+	if ! grep -q " Copyright (c) 2003" $(SOURCE_DIR)/LICENSE; then \
+	  exit 2; \
+	fi
+	echo BSD > $@
 
 build:: $(SRC_DIRS)
 	grep '^gold:' /etc/passwd; \
@@ -125,8 +141,9 @@ install::
 	  done \
 	)
 	cp patch-files/*.conf patch-files/auth_key $(ROOT)/$(PKGROOT)/etc/
+	$(INSTALL_LICENSE_FILES)
 	@echo "::: Package $(NAME) install complete :::"
 
 clean::
-	rm -rf $(SOURCE_DIR)
+	rm -rf $(SOURCE_DIR) DESCRIPTION LICENSE
 

@@ -64,7 +64,7 @@ include Rules.mk
 build:
 
 install::
-	  mkdir -p -m 755 $(ROOT)/$(PKGROOT)/profile.d
-	  cp gold-path.* $(ROOT)/$(PKGROOT)/profile.d/
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)
+	cp gold-path.* $(ROOT)/$(PKGROOT)/
 
 clean::
