@@ -1,4 +1,4 @@
-NAME       = gold-client-config
+NAME       = sdsc-gold-client-config
 VERSION    = 1
 RELEASE    = 0
 PKGROOT    = /etc/profile.d

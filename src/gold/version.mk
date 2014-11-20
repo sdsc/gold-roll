@@ -1,4 +1,4 @@
-NAME           = gold
+NAME           = sdsc-gold
 VERSION        = 2.2.0.5
 RELEASE        = 1
 PKGROOT        = /opt/gold

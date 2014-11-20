@@ -1,4 +1,4 @@
-NAME       = gold-server-config
+NAME       = sdsc-gold-server-config
 VERSION    = 1
 RELEASE    = 0
 PKGROOT    = /etc

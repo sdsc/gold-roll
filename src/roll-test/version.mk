@@ -1,4 +1,4 @@
-NAME       = gold-roll-test
+NAME       = sdsc-gold-roll-test
 VERSION    = 1
 RELEASE    = 0
 PKGROOT    = /root/rolltests

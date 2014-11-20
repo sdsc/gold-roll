@@ -16,7 +16,8 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 <package>postgresql-devel</package>
 <package>postgresql</package>
 <package>postgresql-server</package>
-<package>gold-server-config</package>
+
+<package>sdsc-gold-server-config</package>
 
 <post>
 perl -pi -e 's#GOLD_SUBNET#&Kickstart_PrivateNetwork;/&Kickstart_PrivateNetmaskCIDR;#g' /etc/rc.d/rocksconfig.d/*

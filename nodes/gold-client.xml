@@ -14,9 +14,10 @@ All rights reserved. Rocks(r) v5.1 www.rocksclusters.org
 
 <package>perl-suidperl</package>
 <package>libxml2-devel</package>
-<package>gold</package>
-<package>gold-client-config</package>
-<package>gold-roll-test</package>
+
+<package>sdsc-gold</package>
+<package>sdsc-gold-client-config</package>
+<package>sdsc-gold-roll-test</package>
 
 <post>
 
