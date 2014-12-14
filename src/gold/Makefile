@@ -96,8 +96,6 @@ BUNDLED_PERL_MODULES = \
 include $(SDSCDEVEL)/Pull.mk
 include $(SDSCDEVEL)/Rules.mk
 
-LICENSE_FILES = $(SOURCE_DIR)/{LICENSE,README}
-
 $(NAME).spec: DESCRIPTION LICENSE
 
 DESCRIPTION:
@@ -106,9 +104,7 @@ DESCRIPTION:
 	) > $@
 
 LICENSE: $(SRC_DIRS)
-	if ! grep -q " Copyright (c) 2003" $(SOURCE_DIR)/LICENSE; then \
-	  exit 2; \
-	fi
+	$(CHECK_LICENSE_FILES)
 	echo BSD > $@
 
 build:: $(SRC_DIRS)
