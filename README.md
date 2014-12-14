@@ -27,7 +27,8 @@ Rocks development machine.
 
 ## Dependencies
 
-None.
+The sdsc-roll must be installed on the build machine, since the build process
+depends on make include files provided by that roll.
 
 
 ## Building
