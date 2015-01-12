@@ -66,8 +66,8 @@ PGDATA_DIR = /export/pgsql/data
 build:
 
 install::
-	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/init.d
-	cp goldd $(ROOT)/$(PKGROOT)/init.d/
+	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/rc.d/init.d
+	cp goldd $(ROOT)/$(PKGROOT)/rc.d/init.d/
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/rc.d/rocksconfig.d
 	cp post* $(ROOT)/$(PKGROOT)/rc.d/rocksconfig.d
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/sysconfig/pgsql
