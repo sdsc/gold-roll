@@ -40,7 +40,7 @@ SKIP: {
 SKIP: {
   skip 'not server', 4 if $appliance ne 'Frontend';
   ok(-x '/usr/bin/psql', 'postgres installed');
-  ok(-f '/etc/init.d/gold', 'goldd service installed');
+  ok(-f '/etc/init.d/goldd', 'goldd service installed');
   SKIP: {
     skip 'pg init running', 1 if -f '/etc/rc.d/rocksconfig.d/post-49-postgres';
     $output = `echo '\\l' | psql -U gold`;
