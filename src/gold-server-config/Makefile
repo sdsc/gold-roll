@@ -67,7 +67,7 @@ build:
 
 install::
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/rc.d/init.d
-	cp goldd $(ROOT)/$(PKGROOT)/rc.d/init.d/
+	cp gold $(ROOT)/$(PKGROOT)/rc.d/init.d/
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/rc.d/rocksconfig.d
 	cp post* $(ROOT)/$(PKGROOT)/rc.d/rocksconfig.d
 	mkdir -p -m 755 $(ROOT)/$(PKGROOT)/sysconfig/pgsql
