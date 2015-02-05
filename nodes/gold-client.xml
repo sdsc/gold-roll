@@ -35,7 +35,7 @@ fi
 /bin/chmod a+w /var/log/gold/gold.log
 /bin/chown -R gold:gold /var/log/gold
 
-perl -pi -e 's/GOLD_SERVER/&Kickstart_PublicHostname;/g' /opt/gold/etc/*
+perl -pi -e 's/GOLD_SERVER/&Kickstart_PrivateHostname;.local/g' /opt/gold/etc/*
 
 # Install the perl prerequisite packages that are bundled w/gold.  Use the
 # versions bundled w/the o/s where possible.
